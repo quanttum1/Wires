@@ -25,8 +25,7 @@ class GameOfLife : CellularAutomaton
     }
   }
 
-  public override void fillCell(int x, int y, object cell) {
-    System.Console.WriteLine($"{x} {y} {aliveCells}");
+  public override object fillCell(int x, int y, object cell) {
     bool isAlive; // TODO: Rename to shouldBeAlive
     if (cell is bool _isAlive)
     {
@@ -39,16 +38,20 @@ class GameOfLife : CellularAutomaton
     Vector2 cellCoord = new Vector2(x, y);
     bool isAlreadyAlive = aliveCells.Contains(cellCoord);
 
-    System.Console.WriteLine($"well {isAlive} {isAlreadyAlive}");
     if (isAlive)
     {
       if (!isAlreadyAlive) {
         aliveCells.Add(cellCoord);
+      } else
+      {
+          aliveCells.Remove(cellCoord);
+          return false;
       }
     } else
     {
       if (isAlreadyAlive) aliveCells.Remove(cellCoord);
     }
+    return cell;
   }
 
   public override void Update() => throw new NotImplementedException();

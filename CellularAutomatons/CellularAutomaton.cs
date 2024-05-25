@@ -16,7 +16,7 @@ abstract class CellularAutomaton {
 
   public abstract CellType[] CellTypes { get; }
 
-  public abstract void fillCell(int x, int y, object cell);
+  public abstract object fillCell(int x, int y, object cell); // Returns a new cell to be overrided instead of the previous one
 
   public abstract void Update();
 }

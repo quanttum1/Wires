@@ -25,8 +25,10 @@ class Field {
     int scale = 10;
     double scaleFactor = 1;
 
-    CellularAutomaton ca = new GameOfLife();
+    object cellToFill = true;
 
+    CellularAutomaton ca = new GameOfLife();
+ 
     
 
       while (!Raylib.WindowShouldClose())
@@ -68,7 +70,19 @@ class Field {
         if (Raylib.IsMouseButtonPressed(MouseButton.Left) /* || Raylib.IsMouseButtonDown(MouseButton.Left) */)
         {
           Vector2 mousePosition = Raylib.GetMousePosition();
-          ca.fillCell((int)(mousePosition.X - offset.X) / cellSize + 1, (int)(mousePosition.Y - offset.Y) / cellSize + 1, true);
+          Vector2 cellCoord = mousePosition - offset;
+
+          if (cellCoord.X > 0)
+          {
+              cellCoord.X += cellSize;
+          }
+
+          if (cellCoord.Y > 0)
+          {
+              cellCoord.Y += cellSize;
+          }
+
+          cellToFill = ca.fillCell((int)cellCoord.X / cellSize, (int)cellCoord.Y / cellSize, cellToFill);
         }
 
         Raylib.EndDrawing();
