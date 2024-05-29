@@ -1,3 +1,6 @@
+using System.Numerics;
+using SFML.Graphics;
+
 namespace Wires.CellularAutomatons;
 
 abstract class CellularAutomaton {
@@ -9,10 +12,11 @@ abstract class CellularAutomaton {
       public InvalidCellGivenException(string message, System.Exception inner) : base(message, inner) { }
   }
 
-  protected readonly (int, int, int) defaultDarkColor = (0, 0, 79);
-  protected readonly (int, int, int) defaultLightColor = (255, 255, 255);
+  // TODO: Move to Config
+  protected readonly Color defaultDarkColor = new Color(0x00004F); // #00004F
+  protected readonly Color defaultLightColor = new Color(0xFFFFFF); // #FFFFFF
 
-  public abstract (int, int, int) GetCellColor(int x, int y, bool lightTheme);
+  public abstract Color GetCellColor(Vector2 index);
 
   public abstract CellType[] CellTypes { get; }
 
