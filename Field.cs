@@ -19,11 +19,7 @@ class Field {
     }
 
     public void Run() 
-    {
-        // TODO: Split Raylib methods into separate class
-        // TODO: Refactoring
-        // TODO: Normal scale 
-
+    { 
         int scale = 10;
         double scaleFactor = 1;
 
@@ -45,26 +41,27 @@ class Field {
 
             Color currentCellColor;
             Vector2 absoluteCellIndex = new Vector2(); // The "number" of cell, cells-neighbours differ in one digit
-            Vector2 cellPosition = new Vector2(); // The position of the cell in the window
+            Vector2 cellPosition = new Vector2(); // The position of the cell within the window
 
             // Loop goes through all the cell that are going to be displayed
-            // Have to add 1, because when the field is not aligned, an extra cell is required
-            for (int i = 0; i < _window.Size.X / cellSize + 1; i++) 
+            // Have to add 2 for x and 3 for y, because when the field is not aligned, an extra cell is required
+            // And with only 1 or 2 extra cell there might be glitches at the bottom and the right side of the window
+            for (int i = 0; i < _window.Size.X / cellSize + 2; i++) 
             {
-                for (int j = 0; j < _window.Size.Y / cellSize + 1; j++)
+                for (int j = 0; j < _window.Size.Y / cellSize + 3; j++)
                 {
-                    absoluteCellIndex.X = i - (int)_offset.X / cellSize;
-                    absoluteCellIndex.Y = j - (int)_offset.Y / cellSize;
+                    absoluteCellIndex.X = i + (int)_offset.X / cellSize;
+                    absoluteCellIndex.Y = j + (int)_offset.Y / cellSize;
 
                     currentCellColor = ca.GetCellColor(absoluteCellIndex);
 
-                    cellPosition.X = i * cellSize - _offset.X % cellSize;
-                    cellPosition.X = j * cellSize - _offset.Y % cellSize;
+                    cellPosition.X = (i - 1) * cellSize - (_offset.X % cellSize);
+                    cellPosition.Y = (j - 1) * cellSize - (_offset.Y % cellSize);
 
-                    RectangleShape cell = new RectangleShape(new Vector2f(cellPosition.X, cellPosition.Y));
-                    cell.Position = new Vector2f(cellSize - 1, cellSize - 1); // -1 to make a small gap
+                    RectangleShape cell = new RectangleShape();
+                    cell.Position = new Vector2f(cellPosition.X, cellPosition.Y);
+                    cell.Size = new Vector2f(cellSize - 1, cellSize - 1); // -1 to make a small gap
                     cell.FillColor = new Color(currentCellColor);
-                    System.Console.WriteLine($"{cell.Position.X} {cell.Position.Y}");
 
                     _window.Draw(cell);
                 }
@@ -106,7 +103,10 @@ class Field {
     private void MouseMoveHandler(object? sender, MouseMoveEventArgs e)
     {
         Vector2 currentMousePosition = new Vector2(e.X, e.Y);
-        _offset += currentMousePosition - _previousMousePosition;
+        if (Mouse.IsButtonPressed(Mouse.Button.Left))
+        {
+            _offset -= currentMousePosition - _previousMousePosition;
+        }
         _previousMousePosition = currentMousePosition;
     }
 
