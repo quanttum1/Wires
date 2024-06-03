@@ -13,7 +13,7 @@ class GameOfLife : CellularAutomaton
         // TODO: make it normal, y'know
         int x = (int)index.X;
         int y = (int)index.Y;
-        bool lightTheme = false;
+        bool lightTheme = true;
 
         var aliveColor = lightTheme ? defaultDarkColor : defaultLightColor;
         var deadColor = !lightTheme ? defaultDarkColor : defaultLightColor;

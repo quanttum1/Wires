@@ -6,8 +6,6 @@ class Program
     {
         Config config = new Config();
 
-        config.SetCellCount(20);
-
         Field field = new Field();
         field.Run();
     }

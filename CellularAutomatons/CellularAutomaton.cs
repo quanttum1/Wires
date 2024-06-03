@@ -13,8 +13,8 @@ abstract class CellularAutomaton {
   }
 
   // TODO: Move to Config
-  protected readonly Color defaultDarkColor = new Color(0x00004F); // #00004F
-  protected readonly Color defaultLightColor = new Color(0xFFFFFF); // #FFFFFF
+  protected readonly Color defaultDarkColor = new Color(0x00004FFF); // #00004F
+  protected readonly Color defaultLightColor = new Color(0xFFFFFFFF); // #FFFFFF
 
   public abstract Color GetCellColor(Vector2 index);
 

@@ -20,21 +20,19 @@ class Field {
 
     public void Run() 
     { 
-        int scale = 10;
-        double scaleFactor = 1;
-
         object cellToFill = true;
 
         CellularAutomaton ca = new GameOfLife();
 
         _window.MouseMoved += MouseMoveHandler;
+        _window.MouseWheelScrolled += MouseWheelScrollHandler;
 
         int cellSize;
         while (_window.IsOpen)
         {
             cellSize = (int)(_window.Size.X < _window.Size.Y ? _window.Size.X : _window.Size.Y); // Takes width or heigt, whatever is smaller
             cellSize /= Config.CellCount; // Divides on the number of cell that is supposed to be displayed
-            cellSize = (int)(cellSize * scaleFactor); // And multiplies on the scale factor
+            cellSize = (int)(cellSize * _scaleFactor); // And multiplies on the scale factor
 
             _window.DispatchEvents();
             _window.Clear(new Color(127, 127, 127, 255)); // TODO: Move to config and let the cellular automaton set the color
@@ -48,7 +46,7 @@ class Field {
             // And with only 1 or 2 extra cell there might be glitches at the bottom and the right side of the window
             for (int i = 0; i < _window.Size.X / cellSize + 2; i++) 
             {
-                for (int j = 0; j < _window.Size.Y / cellSize + 3; j++)
+                for (int j = 0; j < _window.Size.Y / cellSize + 2; j++)
                 {
                     absoluteCellIndex.X = i + (int)_offset.X / cellSize;
                     absoluteCellIndex.Y = j + (int)_offset.Y / cellSize;
@@ -60,7 +58,7 @@ class Field {
 
                     RectangleShape cell = new RectangleShape();
                     cell.Position = new Vector2f(cellPosition.X, cellPosition.Y);
-                    cell.Size = new Vector2f(cellSize - 1, cellSize - 1); // -1 to make a small gap
+                    cell.Size = new Vector2f(cellSize - Config.GapBetweenCells, cellSize - Config.GapBetweenCells); // -1 to make a small gap
                     cell.FillColor = new Color(currentCellColor);
 
                     _window.Draw(cell);
@@ -68,12 +66,7 @@ class Field {
             }
             _window.Display();
 
-            // float scroll = Raylib.GetMouseWheelMove();
-            //
-            // if (scale - (int)scroll > 0) scale -= (int)scroll;
-            //
-            // scaleFactor = 1.0 / (scale * 0.1);
-            //
+            
             // if (Raylib.IsMouseButtonPressed(MouseButton.Left) /* || Raylib.IsMouseButtonDown(MouseButton.Left) */)
             // {
             //     Vector2 mousePosition = Raylib.GetMousePosition();
@@ -98,6 +91,14 @@ class Field {
     }
 
     Vector2 _offset = new Vector2(0, 0);
+
+    private int _scale = 0;
+    private double _scaleFactor = 1;
+    private void MouseWheelScrollHandler(object? sender, MouseWheelScrollEventArgs e)
+    {
+        if(_scale - (int)e.Delta > 0) _scale -= (int)e.Delta;
+        _scaleFactor = 1.0 / (_scale * 0.1); // TODO: Get rid of magical number 0.1
+    }
 
     private Vector2 _previousMousePosition;
     private void MouseMoveHandler(object? sender, MouseMoveEventArgs e)
