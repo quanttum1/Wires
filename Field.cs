@@ -20,7 +20,10 @@ class Field {
 
     public void Run() 
     { 
-        object cellToFill = true;
+        object cellToFill = true; // TODO: Eliminate
+
+        RenderTexture panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y * 0.1));
+        Panel panel = new Panel(panelTexture);
 
         CellularAutomaton ca = new GameOfLife();
 
@@ -64,6 +67,13 @@ class Field {
                     _window.Draw(cell);
                 }
             }
+
+            panel.Draw();
+            RectangleShape panelRect = new RectangleShape(new Vector2f(_window.Size.X, _window.Size.Y / 10));
+            panelRect.Position = new Vector2f(0, 0);
+            panelRect.Texture = panelTexture.Texture;
+            _window.Draw(panelRect);
+
             _window.Display();
 
             
