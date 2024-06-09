@@ -18,6 +18,7 @@ class Field {
         _previousMousePosition = new Vector2(pmp.X, pmp.Y);
     }
 
+    int _cellSize;
     public void Run() 
     { 
         object cellToFill = true; // TODO: Eliminate
@@ -30,12 +31,11 @@ class Field {
         _window.MouseMoved += MouseMoveHandler;
         _window.MouseWheelScrolled += MouseWheelScrollHandler;
 
-        int cellSize;
         while (_window.IsOpen)
         {
-            cellSize = (int)(_window.Size.X < _window.Size.Y ? _window.Size.X : _window.Size.Y); // Takes width or heigt, whatever is smaller
-            cellSize /= Config.CellCount; // Divides on the number of cell that is supposed to be displayed
-            cellSize = (int)(cellSize * _scaleFactor); // And multiplies on the scale factor
+            _cellSize = (int)(_window.Size.X < _window.Size.Y ? _window.Size.X : _window.Size.Y); // Takes width or heigt, whatever is smaller
+            _cellSize /= Config.CellCount; // Divides on the number of cell that is supposed to be displayed
+            _cellSize = (int)(_cellSize * _scaleFactor); // And multiplies on the scale factor
 
             _window.DispatchEvents();
             _window.Clear(new Color(127, 127, 127, 255)); // TODO: Move to config and let the cellular automaton set the color
@@ -45,23 +45,23 @@ class Field {
             Vector2 cellPosition = new Vector2(); // The position of the cell within the window
 
             // Loop goes through all the cell that are going to be displayed
-            // Have to add 2 for x and 3 for y, because when the field is not aligned, an extra cell is required
-            // And with only 1 or 2 extra cell there might be glitches at the bottom and the right side of the window
-            for (int i = 0; i < _window.Size.X / cellSize + 2; i++) 
+            // Have to add 2 for x and y, because when the field is not aligned, an extra cell is required
+            // But for some reason 2 is not enough an have to add 3
+            for (int i = 0; i < _window.Size.X / _cellSize + 3; i++) 
             {
-                for (int j = 0; j < _window.Size.Y / cellSize + 2; j++)
+                for (int j = 0; j < _window.Size.Y / _cellSize + 3; j++)
                 {
-                    absoluteCellIndex.X = i + (int)_offset.X / cellSize;
-                    absoluteCellIndex.Y = j + (int)_offset.Y / cellSize;
+                    absoluteCellIndex.X = i + (int)_offset.X / _cellSize;
+                    absoluteCellIndex.Y = j + (int)_offset.Y / _cellSize;
 
                     currentCellColor = ca.GetCellColor(absoluteCellIndex);
 
-                    cellPosition.X = (i - 1) * cellSize - (_offset.X % cellSize);
-                    cellPosition.Y = (j - 1) * cellSize - (_offset.Y % cellSize);
+                    cellPosition.X = (i - 1) * _cellSize - (_offset.X % _cellSize);
+                    cellPosition.Y = (j - 1) * _cellSize - (_offset.Y % _cellSize);
 
                     RectangleShape cell = new RectangleShape();
                     cell.Position = new Vector2f(cellPosition.X, cellPosition.Y);
-                    cell.Size = new Vector2f(cellSize - Config.GapBetweenCells, cellSize - Config.GapBetweenCells); // -1 to make a small gap
+                    cell.Size = new Vector2f(_cellSize - Config.GapBetweenCells, _cellSize - Config.GapBetweenCells);
                     cell.FillColor = new Color(currentCellColor);
 
                     _window.Draw(cell);
@@ -84,15 +84,15 @@ class Field {
             //
             //     if (cellCoord.X > 0)
             //     {
-            //         cellCoord.X += cellSize;
+            //         cellCoord.X += _cellSize;
             //     }
             //
             //     if (cellCoord.Y > 0)
             //     {
-            //         cellCoord.Y += cellSize;
+            //         cellCoord.Y += _cellSize;
             //     }
             //
-            //     cellToFill = ca.fillCell((int)cellCoord.X / cellSize, (int)cellCoord.Y / cellSize, cellToFill);
+            //     cellToFill = ca.fillCell((int)cellCoord.X / _cellSize, (int)cellCoord.Y / _cellSize, cellToFill);
             // }
 
             /* Raylib.EndDrawing(); */
@@ -102,12 +102,20 @@ class Field {
 
     Vector2 _offset = new Vector2(0, 0);
 
-    private int _scale = 0;
-    private double _scaleFactor = 1;
+    private int _scale = 1; // TODO: Create Config.InitialScale
+    private double _scaleFactor = 1.0 / (1 * 0.1); // TODO: Replace 1 with Config.InitialScale
     private void MouseWheelScrollHandler(object? sender, MouseWheelScrollEventArgs e)
     {
+        Vector2 zoomingPoint = new Vector2(e.X, e.Y) + _offset;
+        double oldScaleFactor = _scaleFactor;
+        
         if(_scale - (int)e.Delta > 0) _scale -= (int)e.Delta;
         _scaleFactor = 1.0 / (_scale * 0.1); // TODO: Get rid of magical number 0.1
+
+        double scaleChanged = _scaleFactor / oldScaleFactor;
+        Vector2 zoomingOffset = (zoomingPoint * (float)scaleChanged) - zoomingPoint;
+
+        _offset += zoomingOffset;
     }
 
     private Vector2 _previousMousePosition;
