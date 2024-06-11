@@ -23,8 +23,8 @@ class Field {
     { 
         object cellToFill = true; // TODO: Eliminate
 
-        RenderTexture panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y * 0.1));
-        Panel panel = new Panel(panelTexture);
+        RenderTexture panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y / 15));
+        Panel panel = new Panel(panelTexture, _window);
 
         CellularAutomaton ca = new GameOfLife();
 
@@ -69,7 +69,7 @@ class Field {
             }
 
             panel.Draw();
-            RectangleShape panelRect = new RectangleShape(new Vector2f(_window.Size.X, _window.Size.Y / 10));
+            RectangleShape panelRect = new RectangleShape(new Vector2f(_window.Size.X, _window.Size.Y / 15));
             panelRect.Position = new Vector2f(0, 0);
             panelRect.Texture = panelTexture.Texture;
             _window.Draw(panelRect);
@@ -100,7 +100,7 @@ class Field {
 
     }
 
-    Vector2 _offset = new Vector2(0, 0);
+    Vector2 _offset = new Vector2(0, 0); // Offset due to dragging the map
 
     private int _scale = 1; // TODO: Create Config.InitialScale
     private double _scaleFactor = 1.0 / (1 * 0.1); // TODO: Replace 1 with Config.InitialScale
