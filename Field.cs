@@ -5,6 +5,7 @@ using SFML.Window;
 using SFML.Graphics;
 
 using Wires.CellularAutomatons;
+using Wires.ControlPanel;
 
 namespace Wires;
 
@@ -16,15 +17,15 @@ class Field {
 
         Vector2i pmp = Mouse.GetPosition(_window);
         _previousMousePosition = new Vector2(pmp.X, pmp.Y);
+
+        panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y / 15));
+        panel = PanelCreator.Create(panelTexture, _window);
     }
 
     int _cellSize;
     public void Run() 
     { 
         object cellToFill = true; // TODO: Eliminate
-
-        RenderTexture panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y / 15));
-        Panel panel = new Panel(panelTexture, _window);
 
         CellularAutomaton ca = new GameOfLife();
 
@@ -75,29 +76,7 @@ class Field {
             _window.Draw(panelRect);
 
             _window.Display();
-
-            
-            // if (Raylib.IsMouseButtonPressed(MouseButton.Left) /* || Raylib.IsMouseButtonDown(MouseButton.Left) */)
-            // {
-            //     Vector2 mousePosition = Raylib.GetMousePosition();
-            //     Vector2 cellCoord = mousePosition - offset;
-            //
-            //     if (cellCoord.X > 0)
-            //     {
-            //         cellCoord.X += _cellSize;
-            //     }
-            //
-            //     if (cellCoord.Y > 0)
-            //     {
-            //         cellCoord.Y += _cellSize;
-            //     }
-            //
-            //     cellToFill = ca.fillCell((int)cellCoord.X / _cellSize, (int)cellCoord.Y / _cellSize, cellToFill);
-            // }
-
-            /* Raylib.EndDrawing(); */
         }
-
     }
 
     Vector2 _offset = new Vector2(0, 0); // Offset due to dragging the map
@@ -129,5 +108,7 @@ class Field {
         _previousMousePosition = currentMousePosition;
     }
 
+    RenderTexture panelTexture;
+    Panel panel;
     private RenderWindow _window;
 }
