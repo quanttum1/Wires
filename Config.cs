@@ -4,10 +4,10 @@ namespace Wires;
 // Object can be created only once for security reasons
 class Config
 {
-    public static bool VerticalSync { get; private set; } = false;
+    public static bool VerticalSync { get; private set; } = true;
     public static string WindowTitle { get; private set; } = "Wires";
-    public static int CellCount { get; private set; } = 20;
-    public static int GapBetweenCells { get; private set; } = 1;
+    public static int CellCount { get; private set; } = 20; // The initial number of lines/columns of cells
+    public static int GapBetweenCells { get; private set; } = 1; // Size of a gap between cells in pixels
 
     public void SetVerticalSync(bool newValue) => VerticalSync = newValue;
     public void SetWindowTitle(string newValue) => WindowTitle = newValue;

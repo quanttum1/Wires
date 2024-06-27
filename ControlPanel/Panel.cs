@@ -17,11 +17,14 @@ public class Panel
 
     public void Draw() {
         _texture.Clear(new Color(0xeeeeeeee));
+        _texture.SetView(new View(new FloatRect(0, 0, _texture.Size.X, _texture.Size.Y)));
 
         foreach (var i in _buttons)
         {
             i.Draw();
         }
+
+        _texture.Display();
     }
 
     public PanelButton this[int index]

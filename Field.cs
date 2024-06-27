@@ -17,9 +17,6 @@ class Field {
 
         Vector2i pmp = Mouse.GetPosition(_window);
         _previousMousePosition = new Vector2(pmp.X, pmp.Y);
-
-        panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y / 15));
-        panel = PanelCreator.Create(panelTexture, _window);
     }
 
     int _cellSize;
@@ -34,12 +31,18 @@ class Field {
 
         while (_window.IsOpen)
         {
-            _cellSize = (int)(_window.Size.X < _window.Size.Y ? _window.Size.X : _window.Size.Y); // Takes width or heigt, whatever is smaller
+            panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y / 15));
+            panel = PanelCreator.Create(panelTexture, _window);
+
+            _window.SetView(new View(new FloatRect(0, 0, _window.Size.X, _window.Size.Y)));
+
+            // Takes width or heigt, whatever is smaller
+            _cellSize = (int)(_window.Size.X < _window.Size.Y ? _window.Size.X : _window.Size.Y); 
             _cellSize /= Config.CellCount; // Divides on the number of cell that is supposed to be displayed
             _cellSize = (int)(_cellSize * _scaleFactor); // And multiplies on the scale factor
 
             _window.DispatchEvents();
-            _window.Clear(new Color(127, 127, 127, 255)); // TODO: Move to config and let the cellular automaton set the color
+            _window.Clear(new Color(127, 127, 127, 255)); // TODO: Move to the config and let the cellular automaton set the color
 
             Color currentCellColor;
             Vector2 absoluteCellIndex = new Vector2(); // The "number" of cell, cells-neighbours differ in one digit
@@ -47,7 +50,7 @@ class Field {
 
             // Loop goes through all the cell that are going to be displayed
             // Have to add 2 for x and y, because when the field is not aligned, an extra cell is required
-            // But for some reason 2 is not enough an have to add 3
+            // But for some reason 2 is not always enough an have to add 3
             for (int i = 0; i < _window.Size.X / _cellSize + 3; i++) 
             {
                 for (int j = 0; j < _window.Size.Y / _cellSize + 3; j++)
@@ -70,9 +73,11 @@ class Field {
             }
 
             panel.Draw();
+
             RectangleShape panelRect = new RectangleShape(new Vector2f(_window.Size.X, _window.Size.Y / 15));
             panelRect.Position = new Vector2f(0, 0);
             panelRect.Texture = panelTexture.Texture;
+
             _window.Draw(panelRect);
 
             _window.Display();
@@ -81,8 +86,8 @@ class Field {
 
     Vector2 _offset = new Vector2(0, 0); // Offset due to dragging the map
 
-    private int _scale = 1; // TODO: Create Config.InitialScale
-    private double _scaleFactor = 1.0 / (1 * 0.1); // TODO: Replace 1 with Config.InitialScale
+    private int _scale = 10; // TODO: Create Config.InitialScale
+    private double _scaleFactor = 1.0 / (10 * 0.1); // TODO: Replace 1 with Config.InitialScale
     private void MouseWheelScrollHandler(object? sender, MouseWheelScrollEventArgs e)
     {
         Vector2 zoomingPoint = new Vector2(e.X, e.Y) + _offset;

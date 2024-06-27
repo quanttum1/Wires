@@ -8,8 +8,7 @@ public class PanelCreator
     {
         Panel panel = new Panel(texture, window);
 
-        panel[0] = new SimpleButton();
-        panel[-1] = new SimpleButton(Color.Red);
+        panel[-1] = new TextureButton("./assets/day-night-icon-dark.png");
 
         return panel;
     }
