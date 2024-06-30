@@ -5,7 +5,13 @@ using SFML.Graphics;
 namespace Wires.ControlPanel;
 
 abstract public class PanelButton
-{ 
+{
+    public PanelButton(Action onClick)
+    {
+        _onClick = onClick;
+    }
+    Action _onClick;
+
     public int NextPosition 
     {
         get 
@@ -58,8 +64,13 @@ abstract public class PanelButton
         }
         set
         {
-            if (_window != null) throw new ButtonInitializedException("Window is already not initialized");
+            if (_window != null) throw new ButtonInitializedException("Window is already initialized");
             _window = value;
+            if (_target != null)
+            {
+                _window.MouseMoved += MouseMoveHandler;
+                _window.MouseButtonPressed += MousePressHandler;
+            }
         }
     }
 
@@ -73,11 +84,38 @@ abstract public class PanelButton
         }
         set
         {
-            if (_target != null) throw new ButtonInitializedException("Target is already not initialized");
+            if (_target != null) throw new ButtonInitializedException("Target is already initialized");
             _target = value;
+            if (_window != null)
+            {
+                _window.MouseMoved += MouseMoveHandler;
+            }
         }
     }
- 
+
+    protected bool isHovered { private set; get; } = false;
+    void MouseMoveHandler(object? sender, MouseMoveEventArgs e)
+    {
+        float buttonSize = (float)(Target.Size.Y * 0.9);
+
+        float xPosition = (Target.Size.Y * Index + Target.Size.X) % Target.Size.X;
+        if (Index >= 0) xPosition += ButtonSize * Target.Size.Y;
+        float yPosition = ButtonSize * Target.Size.Y;
+
+        isHovered = true;
+
+        isHovered &= e.X > xPosition;
+        isHovered &= e.X < xPosition + buttonSize;
+
+        isHovered &= e.Y > yPosition;
+        isHovered &= e.Y < yPosition + buttonSize;
+    }
+
+    void MousePressHandler(object? sender, MouseButtonEventArgs e)
+    {
+        if (isHovered) _onClick();
+    }
+
     private int? _index;
     public int Index
     {

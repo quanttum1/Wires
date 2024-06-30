@@ -11,20 +11,20 @@ public class Panel
     public Panel(RenderTexture texture, RenderWindow window)
     {
         _window = window;
-        _texture = texture;
+        Texture = texture;
         _buttons = new List<PanelButton>();
     }
 
     public void Draw() {
-        _texture.Clear(new Color(0xeeeeeeee));
-        _texture.SetView(new View(new FloatRect(0, 0, _texture.Size.X, _texture.Size.Y)));
+        Texture.Clear(new Color(0xeeeeeeee));
+        Texture.SetView(new View(new FloatRect(0, 0, Texture.Size.X, Texture.Size.Y)));
 
         foreach (var i in _buttons)
         {
             i.Draw();
         }
 
-        _texture.Display();
+        Texture.Display();
     }
 
     public PanelButton this[int index]
@@ -38,7 +38,7 @@ public class Panel
             _buttons.RemoveAll(i => i.Index == index);
 
             value.Index = index;
-            value.Target = _texture;
+            value.Target = Texture;
             value.Window = _window;
 
             _buttons.Add(value);
@@ -46,6 +46,6 @@ public class Panel
     }
 
     RenderWindow _window;
-    RenderTexture _texture;
+    public RenderTexture Texture; // Public, because need to update Texture when window is resized
     List<PanelButton> _buttons;
 }

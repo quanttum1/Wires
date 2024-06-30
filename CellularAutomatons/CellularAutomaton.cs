@@ -3,7 +3,7 @@ using SFML.Graphics;
 
 namespace Wires.CellularAutomatons;
 
-abstract class CellularAutomaton {
+public abstract class CellularAutomaton {
   
   public class InvalidCellGivenException : System.Exception
   {
@@ -20,7 +20,7 @@ abstract class CellularAutomaton {
 
   public abstract CellType[] CellTypes { get; }
 
-  public abstract object fillCell(int x, int y, object cell); // Returns a new cell to be overrided instead of the previous one
+  public abstract object FillCell(int x, int y, object cell); // Returns a new cell to draw to be overrided instead of the previous one
 
   public abstract void Update();
 }

@@ -3,7 +3,7 @@ using SFML.Graphics;
 namespace Wires.CellularAutomatons;
 
 // TODO: Make darkThemeColor and lightThemeColor private and make a field Color that will get the value using the future class ColorTheme
-class CellType 
+public class CellType 
 {
     public Color darkThemeColor { get; private set; }
     public Color lightThemeColor { get; private set; }

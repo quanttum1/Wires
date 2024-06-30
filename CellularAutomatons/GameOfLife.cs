@@ -10,7 +10,7 @@ class GameOfLife : CellularAutomaton
 
     public override Color GetCellColor(Vector2 index) 
     {
-        // TODO: make it normal, y'know
+        // TODO: I guess, there's no need to explain what's wrong with this code
         int x = (int)index.X;
         int y = (int)index.Y;
         bool lightTheme = true;
@@ -18,7 +18,6 @@ class GameOfLife : CellularAutomaton
         var aliveColor = lightTheme ? defaultDarkColor : defaultLightColor;
         var deadColor = !lightTheme ? defaultDarkColor : defaultLightColor;
 
-        if (x == 1 && y == 1) return aliveColor;
         if (aliveCells.Contains(new Vector2(x, y))) return aliveColor;
         return deadColor;
     }
@@ -28,12 +27,12 @@ class GameOfLife : CellularAutomaton
         get {
             return [
                 new CellType(defaultLightColor, defaultDarkColor, false), // dead
-                new CellType(defaultLightColor, defaultDarkColor, true) // alive
+                new CellType(defaultDarkColor, defaultLightColor, true) // alive
             ];
         }
     }
 
-    public override object fillCell(int x, int y, object cell) 
+    public override object FillCell(int x, int y, object cell) 
     {
         bool isAlive; // TODO: Rename to shouldBeAlive
         if (cell is bool _isAlive)
@@ -63,5 +62,67 @@ class GameOfLife : CellularAutomaton
         return cell;
     }
 
-    public override void Update() => throw new NotImplementedException();
+    public override void Update() 
+    {
+        var newAliveCells = new HashSet<Vector2>();
+        var cellsToCheck = new HashSet<Vector2>();
+
+        foreach (var cell in aliveCells)
+        {
+            cellsToCheck.Add(cell);
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    if (dx != 0 || dy != 0)
+                    {
+                        cellsToCheck.Add(new Vector2(cell.X + dx, cell.Y + dy));
+                    }
+                }
+            }
+        }
+
+        foreach (var cell in cellsToCheck)
+        {
+            int liveNeighbors = GetLiveNeighborsCount(cell);
+
+            if (aliveCells.Contains(cell))
+            {
+                if (liveNeighbors == 2 || liveNeighbors == 3)
+                {
+                    newAliveCells.Add(cell);
+                }
+            }
+            else
+            {
+                if (liveNeighbors == 3)
+                {
+                    newAliveCells.Add(cell);
+                }
+            }
+        }
+
+        aliveCells = newAliveCells.ToList();
+    }
+
+    private int GetLiveNeighborsCount(Vector2 cell)
+    {
+        int liveNeighbors = 0;
+
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                if (dx != 0 || dy != 0)
+                {
+                    if (aliveCells.Contains(new Vector2(cell.X + dx, cell.Y + dy)))
+                    {
+                        liveNeighbors++;
+                    }
+                }
+            }
+        }
+
+        return liveNeighbors;
+    }
 }

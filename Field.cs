@@ -24,17 +24,18 @@ class Field {
     { 
         object cellToFill = true; // TODO: Eliminate
 
-        CellularAutomaton ca = new GameOfLife();
+        _ca = new GameOfLife();
 
         _window.MouseMoved += MouseMoveHandler;
         _window.MouseWheelScrolled += MouseWheelScrollHandler;
+        _window.MouseButtonPressed += MousePressHandler;
 
+        panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y / 15));
+        panel = PanelCreator.Create(panelTexture, _window, _ca);
+        
         while (_window.IsOpen)
         {
-            panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y / 15));
-            panel = PanelCreator.Create(panelTexture, _window);
-
-            _window.SetView(new View(new FloatRect(0, 0, _window.Size.X, _window.Size.Y)));
+            _window.SetView(new View(new FloatRect(0, 0, _window.Size.X, _window.Size.Y))); // To avoid build-in scale
 
             // Takes width or heigt, whatever is smaller
             _cellSize = (int)(_window.Size.X < _window.Size.Y ? _window.Size.X : _window.Size.Y); 
@@ -58,7 +59,7 @@ class Field {
                     absoluteCellIndex.X = i + (int)_offset.X / _cellSize;
                     absoluteCellIndex.Y = j + (int)_offset.Y / _cellSize;
 
-                    currentCellColor = ca.GetCellColor(absoluteCellIndex);
+                    currentCellColor = _ca.GetCellColor(absoluteCellIndex);
 
                     cellPosition.X = (i - 1) * _cellSize - (_offset.X % _cellSize);
                     cellPosition.Y = (j - 1) * _cellSize - (_offset.Y % _cellSize);
@@ -101,7 +102,7 @@ class Field {
 
         _offset += zoomingOffset;
     }
-
+ 
     private Vector2 _previousMousePosition;
     private void MouseMoveHandler(object? sender, MouseMoveEventArgs e)
     {
@@ -113,6 +114,14 @@ class Field {
         _previousMousePosition = currentMousePosition;
     }
 
+    void MousePressHandler(object? sender, MouseButtonEventArgs e)
+    {
+        Vector2 clickPosition = new Vector2(e.X, e.Y);
+        clickPosition += _offset;
+        _ca.FillCell((int)clickPosition.X / _cellSize + 1, (int)clickPosition.Y / _cellSize + 1, true);
+    }
+
+    CellularAutomaton _ca;
     RenderTexture panelTexture;
     Panel panel;
     private RenderWindow _window;
