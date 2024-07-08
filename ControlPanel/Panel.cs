@@ -11,7 +11,7 @@ public class Panel
     public Panel(RenderTexture texture, RenderWindow window)
     {
         _window = window;
-        Texture = texture;
+        _texture = texture;
         _buttons = new List<PanelButton>();
     }
 
@@ -46,6 +46,21 @@ public class Panel
     }
 
     RenderWindow _window;
-    public RenderTexture Texture; // Public, because need to update Texture when window is resized
+    private RenderTexture _texture;
+    public RenderTexture Texture
+    {
+        get
+        {
+            return _texture;
+        }
+        set
+        {
+            for (int i = 0; i < _buttons.Count; i++)
+            {
+                _buttons[i].Target = value;
+            }
+            _texture = value;
+        }
+    }
     List<PanelButton> _buttons;
 }

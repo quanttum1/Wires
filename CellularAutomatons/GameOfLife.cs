@@ -22,7 +22,7 @@ class GameOfLife : CellularAutomaton
         return deadColor;
     }
 
-    public override CellType[] CellTypes 
+    protected override CellType[] _cellTypes 
     {
         get {
             return [
@@ -32,34 +32,26 @@ class GameOfLife : CellularAutomaton
         }
     }
 
-    public override object FillCell(int x, int y, object cell) 
+    public override void FillCell(int x, int y) 
     {
-        bool isAlive; // TODO: Rename to shouldBeAlive
-        if (cell is bool _isAlive)
-        {
-            isAlive = (bool)_isAlive;
-        } else
-        {
-            throw new InvalidCellGivenException("Invalid cell was given to fill for GameOfLife");
-        }
+        bool shouldBeAlive = (bool)_cellTypes[_cellTypeSelected].cell; 
 
         Vector2 cellCoord = new Vector2(x, y);
         bool isAlreadyAlive = aliveCells.Contains(cellCoord);
 
-        if (isAlive)
+        if (shouldBeAlive)
         {
-            if (!isAlreadyAlive) {
-                aliveCells.Add(cellCoord);
-            } else
+            if (!isAlreadyAlive)
             {
-                aliveCells.Remove(cellCoord);
-                return false;
+                aliveCells.Add(cellCoord);
             }
         } else
         {
-            if (isAlreadyAlive) aliveCells.Remove(cellCoord);
+            if (isAlreadyAlive)
+            {
+                aliveCells.Remove(cellCoord);
+            }
         }
-        return cell;
     }
 
     public override void Update() 

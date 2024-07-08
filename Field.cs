@@ -15,27 +15,28 @@ class Field {
         _window = Window.Open();        
         _window.Closed += (sender, e) => _window.Close();
 
-        Vector2i pmp = Mouse.GetPosition(_window);
-        _previousMousePosition = new Vector2(pmp.X, pmp.Y);
-    }
-
-    int _cellSize;
-    public void Run() 
-    { 
-        object cellToFill = true; // TODO: Eliminate
-
-        _ca = new GameOfLife();
-
         _window.MouseMoved += MouseMoveHandler;
         _window.MouseWheelScrolled += MouseWheelScrollHandler;
         _window.MouseButtonPressed += MousePressHandler;
 
-        panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y / 15));
-        panel = PanelCreator.Create(panelTexture, _window, _ca);
-        
+        Vector2i pmp = Mouse.GetPosition(_window);
+        _previousMousePosition = new Vector2(pmp.X, pmp.Y);
+
+        _ca = new GameOfLife();
+
+        _panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y / 15));
+        _panel = PanelCreator.Create(_panelTexture, _window, _ca);
+    }
+
+    int _cellSize;
+    public void Run() 
+    {
         while (_window.IsOpen)
         {
             _window.SetView(new View(new FloatRect(0, 0, _window.Size.X, _window.Size.Y))); // To avoid build-in scale
+
+            _panelTexture = new RenderTexture((uint)_window.Size.X, (uint)(_window.Size.Y / 15));
+            _panel.Texture = _panelTexture;
 
             // Takes width or heigt, whatever is smaller
             _cellSize = (int)(_window.Size.X < _window.Size.Y ? _window.Size.X : _window.Size.Y); 
@@ -73,11 +74,11 @@ class Field {
                 }
             }
 
-            panel.Draw();
+            _panel.Draw();
 
             RectangleShape panelRect = new RectangleShape(new Vector2f(_window.Size.X, _window.Size.Y / 15));
             panelRect.Position = new Vector2f(0, 0);
-            panelRect.Texture = panelTexture.Texture;
+            panelRect.Texture = _panelTexture.Texture;
 
             _window.Draw(panelRect);
 
@@ -118,11 +119,11 @@ class Field {
     {
         Vector2 clickPosition = new Vector2(e.X, e.Y);
         clickPosition += _offset;
-        _ca.FillCell((int)clickPosition.X / _cellSize + 1, (int)clickPosition.Y / _cellSize + 1, true);
+        _ca.FillCell((int)clickPosition.X / _cellSize + 1, (int)clickPosition.Y / _cellSize + 1);
     }
 
     CellularAutomaton _ca;
-    RenderTexture panelTexture;
-    Panel panel;
+    RenderTexture _panelTexture;
+    Panel _panel;
     private RenderWindow _window;
 }

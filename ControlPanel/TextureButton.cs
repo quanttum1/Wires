@@ -13,7 +13,7 @@ public class TextureButton : PanelButton
         _imagePath = imagePath;
     }
 
-    protected override Texture GetTexture(float size)
+    protected override Texture _getTexture(float size)
     {
         RenderTexture texture = new RenderTexture((uint)size, (uint)size);
         texture.Clear(Color.Transparent);

@@ -43,11 +43,11 @@ abstract public class PanelButton
             yPosition
         );
 
-        button.Texture = GetTexture(buttonSize);
+        button.Texture = _getTexture(buttonSize);
         Target.Draw(button);
     }
 
-    protected abstract Texture GetTexture(float size);
+    protected abstract Texture _getTexture(float size);
 
     // Should be multiplied by Y size of panel
     // TODO: Rename to Gap or make 0.95f
@@ -74,6 +74,7 @@ abstract public class PanelButton
         }
     }
 
+    private bool _isEventsSet = false;
     private RenderTarget? _target;
     public RenderTarget Target
     {
@@ -84,11 +85,12 @@ abstract public class PanelButton
         }
         set
         {
-            if (_target != null) throw new ButtonInitializedException("Target is already initialized");
+            // Allows to change target, because when the Window is resized need to update panel texture
             _target = value;
-            if (_window != null)
+            if (_window != null && !_isEventsSet)
             {
                 _window.MouseMoved += MouseMoveHandler;
+                _isEventsSet = true;
             }
         }
     }

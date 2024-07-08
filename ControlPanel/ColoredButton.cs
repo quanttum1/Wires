@@ -9,7 +9,7 @@ namespace Wires.ControlPanel;
 // This is a test class to be deleted in further versions
 public class ColoredButton : PanelButton
 {
-    protected override Texture GetTexture(float size) 
+    protected override Texture _getTexture(float size) 
     {
         RenderTexture button = new RenderTexture((uint)size, (uint)size);
 
