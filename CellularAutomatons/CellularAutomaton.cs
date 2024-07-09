@@ -34,8 +34,11 @@ public abstract class CellularAutomaton {
       {
           List<PanelButton> buttons = _cellTypes.Select((cell, index) => (PanelButton)new ColoredButton(
                       cell.lightThemeColor,
-                      () => _cellTypeSelected = (uint)index
-                    )).ToList();
+                      () => {
+                        _cellTypeSelected = (uint)index;
+                        IsDragable = false;
+                      }
+                    )).ToList(); // TODO: Refactoring
           buttons.Insert(0, new TextureButton("./assets/move-icon-dark.png", () => IsDragable = true));
           
           return buttons.ToArray();

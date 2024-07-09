@@ -108,7 +108,7 @@ class Field {
     private void MouseMoveHandler(object? sender, MouseMoveEventArgs e)
     {
         Vector2 currentMousePosition = new Vector2(e.X, e.Y);
-        if (Mouse.IsButtonPressed(Mouse.Button.Left))
+        if (Mouse.IsButtonPressed(Mouse.Button.Left) && _ca.IsDragable)
         {
             _offset -= currentMousePosition - _previousMousePosition;
         }
