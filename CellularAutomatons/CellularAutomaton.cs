@@ -45,7 +45,7 @@ public abstract class CellularAutomaton {
       }
   }
 
-  public abstract void FillCell(int x, int y); // Returns a new cell to draw to be overrided instead of the previous one
+  public abstract void FillCell(int x, int y);
 
   public abstract void Update();
 }

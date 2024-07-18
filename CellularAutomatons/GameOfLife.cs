@@ -34,6 +34,11 @@ class GameOfLife : CellularAutomaton
 
     public override void FillCell(int x, int y) 
     {
+        if (IsDragable)
+        {
+            return;
+        }
+
         bool shouldBeAlive = (bool)_cellTypes[_cellTypeSelected].cell; 
 
         Vector2 cellCoord = new Vector2(x, y);
