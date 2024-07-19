@@ -119,7 +119,14 @@ class Field {
     {
         Vector2 clickPosition = new Vector2(e.X, e.Y);
         clickPosition += _offset;
-        _ca.FillCell((int)clickPosition.X / _cellSize + 1, (int)clickPosition.Y / _cellSize + 1);
+
+        // Prevents the incorrectly filling cell bug
+        if (clickPosition.X > -_cellSize) clickPosition.X += _cellSize;
+        if (clickPosition.Y > -_cellSize) clickPosition.Y += _cellSize;
+
+        clickPosition /= _cellSize;
+
+        _ca.FillCell((int)clickPosition.X, (int)clickPosition.Y);
     }
 
     CellularAutomaton _ca;
